@@ -3,6 +3,7 @@ import { defineStore } from "pinia";
 import { useHelperStore } from ".";
 import { useTokenStore } from "../user/token";
 import { ElMessage } from "element-plus";
+import router from "../../router";
 
 export const useApiStore = defineStore('api', ()=> {
 
@@ -18,8 +19,11 @@ export const useApiStore = defineStore('api', ()=> {
         }).catch(e => {
             ElMessage({
                 type: 'error',
-                message: e.response.data?.message
+                message: e.response.data?.messsage
             })
+            if(e.response.status == 401){
+                router.push({name: 'login'})
+            }
         })
     }
     const postAxios = (payload) => {
@@ -28,7 +32,7 @@ export const useApiStore = defineStore('api', ()=> {
         }).catch(e => {
             ElMessage({
                 type: 'error',
-                message: e.response.data?.message
+                message: e.response.data?.messsage
             })
         })
     }
@@ -38,7 +42,7 @@ export const useApiStore = defineStore('api', ()=> {
         }).catch(e => {
             ElMessage({
                 type: 'error',
-                message: e.response.data?.message
+                message: e.response.data?.messsage
             })
         })
     }
@@ -48,7 +52,7 @@ export const useApiStore = defineStore('api', ()=> {
          }).catch(e => {
              ElMessage({
                  type: 'error',
-                 message: e.response.data?.message
+                 message: e.response.data?.messsage
              })
          })
     }
