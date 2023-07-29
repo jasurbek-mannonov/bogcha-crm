@@ -1,5 +1,5 @@
 import axios from "axios";
-import { defineStore } from "pinia";
+import { defineStore, storeToRefs } from "pinia";
 import { useHelperStore } from ".";
 import { useTokenStore } from "../user/token";
 import { ElMessage } from "element-plus";
@@ -11,24 +11,30 @@ export const useApiStore = defineStore('api', ()=> {
     const {url} = helperStore
 
     const tokenStore = useTokenStore()
-    const {token, header} = tokenStore
+    const {token, header} = storeToRefs(tokenStore)
 
     const getAxios = (payload) => {
         return axios.get(`${url}/${payload.url}`, {
-           ...header,
+           ...header.value,
         }).catch(e => {
+            if(e.response.status == 401){
+                ElMessage({
+                    type: 'error',
+                    message: 'Sizda tizimga kirish vakolati mavjud emas!'
+                })
+                router.push({name: 'login'})
+                return false
+            }
             ElMessage({
                 type: 'error',
                 message: e.response.data?.messsage
             })
-            if(e.response.status == 401){
-                router.push({name: 'login'})
-            }
         })
     }
+
     const postAxios = (payload) => {
         return axios.post(`${url}/${payload.url}`,payload.data,{
-           ...header,
+            ...header.value,
         }).catch(e => {
             ElMessage({
                 type: 'error',
@@ -36,9 +42,10 @@ export const useApiStore = defineStore('api', ()=> {
             })
         })
     }
+
     const putAxios = (payload) => {
         return axios.put(`${url}/${payload.url}`, payload.data, {
-           ...header,
+           ...header.value,
         }).catch(e => {
             ElMessage({
                 type: 'error',
@@ -46,9 +53,9 @@ export const useApiStore = defineStore('api', ()=> {
             })
         })
     }
-    const deleteAxios = () => {
+    const deleteAxios = (payload) => {
         return axios.delete(`${url}/${payload.url}`, {
-            ...header,
+            ...header.value,
          }).catch(e => {
              ElMessage({
                  type: 'error',

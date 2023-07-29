@@ -13,6 +13,11 @@ const router = createRouter({
       path: '/dashboard',
       name: 'dashboard',
       component: () => import('@/views/dashboard.vue')
+    },
+    {
+      path: '/products',
+      name: 'products',
+      component: () => import('@/views/product/products.vue')
     }
   ]
  },
@@ -40,6 +45,7 @@ router.beforeEach((to,from,next) => {
   else{
     const authStore = useAuthStore()
     authStore.checkUser()
+    next()
   }
 })
 

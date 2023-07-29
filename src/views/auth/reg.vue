@@ -18,10 +18,17 @@
           type="password"
           show-password
           @keypress.enter="regis(regForm)"
+          @blur="loginCheck"
         />
       </el-form-item>
       <router-link to="/login">Ro'yxatdan o'tganmisiz?</router-link>
-      <el-button type="success" @click="regis(regForm)">Kirish</el-button>
+      <el-button 
+      type="success" 
+      @click="regis(regForm)"
+      :disabled="status"
+      >
+       Kirish
+      </el-button>
     </el-form>
   </div>
 </template>
@@ -29,10 +36,14 @@
 <script setup>
 import { ref } from "vue";
 import {useAuthStore} from '@/stores/user/auth'
+import axios from "axios";
+import { ElMessage } from "element-plus";
 
 
 const user = ref({});
 const regForm = ref();
+const status = ref(false)
+
 const authStore = useAuthStore()
 
 const rules = ref({
@@ -57,6 +68,25 @@ const rules = ref({
     },
   ],
 });
+
+const loginCheck = async() => {
+  let res = await authStore.checkLogin({
+    login: user.value.login
+  })
+  if(res.status == 200){
+    if(res.data == 'yes'){
+      status.value = true
+      ElMessage({
+        type: 'warning',
+        message: "Bu logindagi foydalanuvchi tizimda allaqachon mavjud! Iltimos, boshqa login kiriting"
+      })
+    }
+    if(res.data == 'no'){
+      status.value = false
+    }
+    console.log(res.data)
+  }
+}
 
 const regis = async (regForm) => {
   console.log(regForm);
