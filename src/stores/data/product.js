@@ -21,6 +21,15 @@ export const useProductStore = defineStore('product', () => {
         }
     }
 
+    const get_all_active_products = async() => {
+        let res = await api.getAxios({
+            url: 'product/active'
+        })
+        if(res.status == 200){
+            products.value = [...res.data]
+        }
+    }
+
     //yangi mahsulot
     const new_product = async(data) => {
         await api.postAxios({
@@ -39,7 +48,7 @@ export const useProductStore = defineStore('product', () => {
     //bitta mahsulotni olish
     const get_product = async (_id) => {
         return await api.getAxios({
-            url: 'product/${_id}'
+            url: `product/${_id}`
         })
     }
 
@@ -109,7 +118,8 @@ export const useProductStore = defineStore('product', () => {
         save_product,
         status_product,
         delete_product,
-        new_product
+        new_product,
+        get_all_active_products
     }
 
 })

@@ -1,6 +1,20 @@
 <template>
   <el-table :data="products">
-    <el-table-column prop="title" label="Mahsulot nomi" />
+    <el-table-column label="t/r" type="index"></el-table-column>
+    <el-table-column prop="title" label="Mahsulot nomi">
+  <template #default="scope">
+    <div class="df align-items-center">
+      <el-image
+        class="mr-1"
+        style="width: 50px; height: 50px;"
+        v-if="scope.row.img && scope.row.img.length > 0"
+        :src="`${url}/${scope.row.img[0].response}`"
+        fit="cover"
+      />
+      {{ scope.row.title }}
+    </div>
+  </template>
+</el-table-column>
     <el-table-column prop="unit" label="Birligi" />
     <el-table-column prop="status" label="Holati">
       <template #default="scope">
@@ -29,6 +43,12 @@
         </el-button>
         <template #dropdown>
           <el-dropdown-menu>
+            <el-dropdown-item @click="editProduct(scope.row._id)">
+              <el-icon>
+                <edit />
+              </el-icon>
+              Tahrirlash
+            </el-dropdown-item>
             <el-dropdown-item @click="remove(scope.row._id)">
               <el-icon>
                 <delete />
@@ -44,10 +64,20 @@
 </template>
 
 <script setup>
-import { storeToRefs } from "pinia";
-import { useProductStore } from "../../stores/data/product";
 
+const emit = defineEmits([
+    'edit'
+])
+
+import { useProductStore } from "../../stores/data/product";
+import { storeToRefs } from "pinia";
+import { useHelperStore } from "../../stores/helpers";
+import { useDialogStore } from "../../stores/usefull/dialog";
 const store = useProductStore();
+
+const helpers = useHelperStore()
+const {url} = helpers
+
 
 const { products } = storeToRefs(store);
 const { status_product, delete_product } = store;
@@ -60,6 +90,15 @@ const remove = (_id) => {
     if(confirm("Qaroringiz qat'iymi?")){
         delete_product(_id)
      }
+}
+
+const dialog = useDialogStore()
+
+const editProduct = (_id) => {
+    emit('edit', _id)
+    //this.$emit('edit', _id)
+    dialog.setToggle(true) // dialog open / close
+    dialog.setEditToggle(true) // add ! save
 }
 </script>
 

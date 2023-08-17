@@ -1,7 +1,7 @@
 <template>
   <el-dialog
     v-model="toggle"
-    :title="`Yangi ${title.toLowerCase()} qo'shish`"
+    :title="editToggle ? `${title}ni tahrirlash` : `Yangi ${title.toLowerCase()}`"
     width="30%"
     :before-close="handleClose"
   >
@@ -36,6 +36,7 @@
             v-model:file-list="product.img"
             :action="`${url}/image/product`"
             list-type="picture-card"
+            :headers="{'authorization': `Bearor ${token}`}"
             :limit="1"
             :before-upload="handleBefore"
             :on-preview="handlePreview"
@@ -62,24 +63,32 @@
 </template>
 
 <script setup>
-defineProps({
+const props = defineProps({
   title: {
     type: String,
   },
-});
+  id: {
+    type: [Number, String]
+  }
+  // "title",
+  //  'id'
+  });
 import { useDialogStore } from "../../stores/usefull/dialog";
 import { storeToRefs } from "pinia";
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import { useProductStore } from "../../stores/data/product";
 import { useHelperStore } from "../../stores/helpers/index";
+import { useTokenStore } from "../../stores/user/token";
 import { ElMessage } from "element-plus";
-
 const helperStore = useHelperStore();
 const { url } = helperStore;
-const store = useProductStore();
 
+const tokenStore = useTokenStore()
+const {token} = storeToRefs(tokenStore)
+
+const store = useProductStore();
 const { products, productsCount, units } = storeToRefs(store);
-const { new_product } = store;
+const { new_product, save_product, get_product } = store;
 
 const product = ref({});
 const rules = ref({
@@ -108,16 +117,20 @@ const rules = ref({
 const productForm = ref();
 
 const dialogStore = useDialogStore();
-const { toggle } = storeToRefs(dialogStore);
-const { setToggle } = dialogStore;
+const { toggle, editToggle } = storeToRefs(dialogStore);
+const { setToggle, setEditToggle} = dialogStore;
 
 const add = async (formEl) => {
   if (!formEl) return;
   await formEl.validate((valid) => {
     if (valid) {
-      new_product(product.value);
+      if(editToggle.value){
+        save_product(product.value)
+      }else{
+        new_product(product.value)
+      }
       product.value = {}
-      setToggle(false);
+      handleClose();
     } else {
       ElMessage.error("Barcha maydonlarni to'ldiring");
     }
@@ -140,7 +153,20 @@ const handlePreview = (uploadFile) => {
 
 const handleClose = () => {
   setToggle(false);
+  setEditToggle(false)
 };
+
+watch(editToggle, async() => {
+   if(editToggle.value){
+    await get_product(props.id)
+    .then(res => {
+      product.value = {...res.data}
+      if(product.value.img){
+        product.value.img[0].url = `${url}/${product.value.img[0].response}`
+      }
+    })
+   }
+})
 </script>
 
 <style lang="scss"></style>

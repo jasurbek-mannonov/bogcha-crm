@@ -84,12 +84,12 @@ const loginCheck = async() => {
     if(res.data == 'no'){
       status.value = false
     }
-    console.log(res.data)
+   
   }
 }
 
 const regis = async (regForm) => {
-  console.log(regForm);
+ 
   if (!regForm) return;
   await regForm.validate((valid, fields) => {
     if (valid) {
@@ -98,7 +98,7 @@ const regis = async (regForm) => {
        password: user.value.password}
       )
     } else {
-      console.log("error submit!", fields);
+      
     }
   });
 };

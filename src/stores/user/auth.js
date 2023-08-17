@@ -63,11 +63,24 @@ export const useAuthStore = defineStore('auth', () => {
         }
     }
 
+    const logout = () => {
+        tokenStore.setToken('')
+        setUser({})
+        cookies.remove('bogcha-token')
+        cookies.remove('bogcha-user')
+        ElMessage({
+            type: 'warning',
+            message: 'Tizimdan chiqdingiz!'
+        })
+        router.push({name: 'login'})
+    }
+
     return {
         login,
         registration,
         user,
         checkUser,
-        checkLogin
+        checkLogin,
+        logout
      }
 })

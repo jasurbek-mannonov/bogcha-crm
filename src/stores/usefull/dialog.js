@@ -9,9 +9,17 @@ export const useDialogStore = defineStore(
             toggle.value = val
         }
 
+        const editToggle = ref(false)
+        const setEditToggle = (val) => {
+            editToggle.value = val
+        }
+
         return {
             toggle,
-            setToggle
+            setToggle,
+            
+            editToggle,
+            setEditToggle
         }
     }
 )

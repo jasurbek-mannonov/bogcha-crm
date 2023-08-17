@@ -61,7 +61,7 @@
   
   const toLogin = async (regForm) => {
 
-    console.log(regForm);
+  
     if (!regForm) return;
     await regForm.validate((valid, fields) => {
       if (valid) {
@@ -70,7 +70,7 @@
          password: user.value.password}
         )
       } else {
-        console.log("error submit!", fields);
+       
       }
     });
   };
