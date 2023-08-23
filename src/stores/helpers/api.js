@@ -28,7 +28,7 @@ export const useApiStore = defineStore('api', ()=> {
             }
             ElMessage({
                 type: 'error',
-                message: e.response.data?.messsage
+                message: e.response.data
             })
         })
     }
@@ -39,7 +39,7 @@ export const useApiStore = defineStore('api', ()=> {
         }).catch(e => {
             ElMessage({
                 type: 'error',
-                message: e.response.data?.messsage
+                message: e.response.data
             })
         })
     }
@@ -50,7 +50,7 @@ export const useApiStore = defineStore('api', ()=> {
         }).catch(e => {
             ElMessage({
                 type: 'error',
-                message: e.response.data?.messsage
+                message: e.response.data
             })
         })
     }
@@ -60,7 +60,7 @@ export const useApiStore = defineStore('api', ()=> {
          }).catch(e => {
              ElMessage({
                  type: 'error',
-                 message: e.response.data?.messsage
+                 message: e.response.data
              })
          })
     }

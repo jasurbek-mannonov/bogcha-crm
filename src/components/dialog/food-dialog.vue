@@ -55,37 +55,21 @@
           </el-form-item>
         </el-col>
       </el-row>
-      <h3 v-if="food.price">Umumiy narx: {{ food.price?.toLocaleString() }} so'm</h3>
-      <!-- <el-form-item label="Mahsulot" prop="product">
-        <el-select
-          clearable
-          filterable
-          v-model="food.product"
-          placeholder="Ro'yxatdan tanlang"
-          class="el-full"
-        >
-          <el-option
-            v-for="item in products"
-            :key="item._id"
-            :label="item.title"
-            :value="item._id"
-          />
-        </el-select>
-      </el-form-item>
-  
-        <el-form-item label="Mahsulot narxi" prop="price">
-          <el-input-number 
-          class="el-full text-left" 
-          :controls="false" 
-          v-model="food.price"
-          />
-        </el-form-item> -->
+      <h3 v-if="food.price">
+        Umumiy narx: {{ food.price?.toLocaleString() }} so'm
+      </h3>
     </el-form>
 
     <template #footer>
       <span class="dialog-footer" @click="handleClose">
         <el-button> Bekor qilish </el-button>
-        <el-button type="primary" @click="add(foodForm)" :disabled="!food.price || food.price < 0"> Saqlash </el-button>
+        <el-button
+          type="primary"
+          @click="add(foodForm)"
+          :disabled="!food.price || food.price < 0"
+        >
+          Saqlash
+        </el-button>
       </span>
     </template>
   </el-dialog>
@@ -132,7 +116,7 @@ const rules = ref({
       message: "Ovqat nomini kiriting",
       trigger: "blur",
     },
-  ]
+  ],
 });
 const foodForm = ref();
 
@@ -144,8 +128,7 @@ const add = async (formEl) => {
   if (!formEl) return;
   await formEl.validate((valid) => {
     if (valid) {
-
-     productsFilter()
+      productsFilter();
 
       if (editToggle.value) {
         save_food(food.value);
@@ -169,40 +152,43 @@ const set_append = (_id, index) => {
 
 const get_append = () => {
   food.value.products = food.value.products.map((item, index) => {
+    let t = priceprods.value.find((item) => item.product._id == item.id);
+    item.append = t.product.miniunit;
+    item.price =
+      t.product.miniunit == t.product.unit ? t.price : t.price / 1000;
 
-  let t = priceprods.value.find(item => item.product._id == item.id);
-  item.append = t.product.miniunit;
-  item.price = t.product.miniunit == t.product.unit ? t.price : t.price / 1000;
-
-    return item
-  })
-}
+    return item;
+  });
+};
 
 const productsFilter = () => {
-  food.value.products = food.value.products.filter((item )=>{
-        if(item.id && item.netto > 0) return item
+  food.value.products = food.value.products.filter((item) => {
+    if (item.id && item.netto > 0) return item;
 
-        return false
-      } )
-}
+    return false;
+  });
+};
 
 const calc = () => {
- productsFilter()
+  productsFilter();
 
-  food.value.price = 0
-  food.value.products.forEach(item => {
-    food.value.price += item.price * item.netto
-  })
+  food.value.price = 0;
+  food.value.products.forEach((item) => {
+    food.value.price += item.price * item.netto;
+  });
 
-  if(food.value.products.at(-1).id && food.value.products.at(-1).netto > 0){
+  if (food.value.products.at(-1).id && food.value.products.at(-1).netto > 0) {
     food.value.products.push({
-      id: '',
-      netto: ''
-    })
+      id: "",
+      netto: "",
+    });
   }
-}
+};
 
 const handleClose = () => {
+  food.value = {
+    products: [{ id: "", netto: 0 }],
+  };
   setToggle(false);
   setEditToggle(false);
 };
@@ -211,8 +197,8 @@ watch(editToggle, async () => {
   if (editToggle.value) {
     await get_food(props.id).then((res) => {
       food.value = { ...res.data };
-      calc()
-      get_append()
+      calc();
+      get_append();
     });
   }
 });

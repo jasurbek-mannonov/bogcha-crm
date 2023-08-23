@@ -4,10 +4,14 @@ import { ref } from 'vue'
 import { useApiStore } from '../helpers/api'
 import { ElMessage } from 'element-plus'
 
+import {usePriceprodStore} from './priceprod'
+
 export const useFoodStore = defineStore('food', () => {
     const foods = ref([])
     const api = useApiStore()
     const foodsCount = ref(0)
+
+    const priceprod = usePriceprodStore()
 
     //barcha ovqatlarni olib beradi
     const get_all_foods = async() => {
@@ -15,7 +19,13 @@ export const useFoodStore = defineStore('food', () => {
             url: 'food'
         })
         if(res.status == 200){
-            foods.value = [...res.data.foods]
+            foods.value = [...res.data.foods.map(food => {
+                food.products = food.products.map(product => {
+                    product.unit = priceprod.units[product.id.unit] || product.id.unit 
+                    return product
+                })
+                return food
+            })]
             foodsCount.value = res.data.count
         }
     }

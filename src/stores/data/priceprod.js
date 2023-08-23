@@ -4,14 +4,14 @@ import { ref } from 'vue'
 import { useApiStore } from '../helpers/api'
 import { ElMessage } from 'element-plus'
 import { convertDate } from '../../func/date'
+
 export const usePriceprodStore = defineStore('priceprod', () => {
     const priceprods = ref([])
     const priceprodsCount = ref(0)
     
     const units = {
         'kg': 'gr',
-        'l': 'ml',
-        'dona': 'dona'
+        'l': 'ml'
     }
 
     const api = useApiStore()
@@ -118,6 +118,7 @@ export const usePriceprodStore = defineStore('priceprod', () => {
     return{
         priceprods,
         priceprodsCount,
+        units,
         get_all_priceprods,
         get_priceprod,
         save_priceprod,
